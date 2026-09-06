@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block nav_library %}active{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'test_library:library_list' %}" class="btn-lavender-outline">← Wróć do biblioteki</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card" style="max-width:700px;">
+    <div class="table-card-header">
+        <div class="table-card-title">{{ title }}</div>
+    </div>
+    <div style="padding:24px;">
+        <form method="post">
+            {% csrf_token %}
+            <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px;">
+                <div>
+                    <label style="font-size:11px;font-weight:700;color:#9B93C4;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">{{ form.test_id.label }}</label>
+                    {{ form.test_id }}
+                    {% if form.test_id.errors %}<div style="color:#8B2020;font-size:12px;margin-top:4px;">{{ form.test_id.errors }}</div>{% endif %}
+                </div>
+                <div>
+                    <label style="font-size:11px;font-weight:700;color:#9B93C4;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">{{ form.name.label }}</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}<div style="color:#8B2020;font-size:12px;margin-top:4px;">{{ form.name.errors }}</div>{% endif %}
+                </div>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:11px;font-weight:700;color:#9B93C4;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">{{ form.description.label }}</label>
+                {{ form.description }}
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:11px;font-weight:700;color:#9B93C4;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">{{ form.preconditions.label }}</label>
+                {{ form.preconditions }}
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:11px;font-weight:700;color:#9B93C4;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">{{ form.steps.label }}</label>
+                {{ form.steps }}
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:11px;font-weight:700;color:#9B93C4;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">{{ form.expected_result.label }}</label>
+                {{ form.expected_result }}
+            </div>
+            <div style="margin-bottom:24px;">
+                <label style="font-size:11px;font-weight:700;color:#9B93C4;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">{{ form.priority.label }}</label>
+                {{ form.priority }}
+            </div>
+            <button type="submit" class="btn-lavender" style="width:100%;padding:10px;font-size:14px;">Zapisz</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

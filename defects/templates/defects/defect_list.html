@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block nav_defects %}active{% endblock %}
+{% block page_title %}Defekty{% endblock %}
+
+{% block topbar_right %}
+    <span style="background:#EDE9FF;color:#7C6FAD;font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;">
+        {{ defects|length }} defektów
+    </span>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Lista defektów</div>
+    </div>
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Projekt</th>
+                <th>Przypadek testowy</th>
+                <th>Waga</th>
+                <th>Status</th>
+                <th>Data zgłoszenia</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for defect in defects %}
+            <tr>
+                <td><strong>{{ defect.name }}</strong></td>
+                <td>{{ defect.test_case.test_plan.project.project_number }}</td>
+                <td><span class="commit-id">{{ defect.test_case.test_id }}</span></td>
+                <td>
+                    {% if defect.severity == 'CRITICAL' %}
+                        <span class="badge-failed-custom">🚨 CRITICAL</span>
+                    {% elif defect.severity == 'MAJOR' %}
+                        <span class="badge-failed-custom">⚠️ MAJOR</span>
+                    {% elif defect.severity == 'MEDIUM' %}
+                        <span class="badge-progress-custom">📋 MEDIUM</span>
+                    {% else %}
+                        <span class="badge-success-custom">📝 MINOR</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if defect.status == 'NEW' %}
+                        <span style="background:#EDE9FF;color:#7C6FAD;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;">NEW</span>
+                    {% elif defect.status == 'IN_PROGRESS' %}
+                        <span class="badge-progress-custom">IN PROGRESS</span>
+                    {% elif defect.status == 'RESOLVED' %}
+                        <span class="badge-success-custom">RESOLVED</span>
+                    {% else %}
+                        <span style="background:#EDE9FF;color:#7C6FAD;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;">CLOSED</span>
+                    {% endif %}
+                </td>
+                <td>{{ defect.reported_at|date:"d.m.Y H:i" }}</td>
+                <td>
+                    <a href="{% url 'defects:defect_detail' defect.pk %}" class="btn-lavender-outline" style="margin-right:4px;">Szczegóły</a>
+                    <a href="{% url 'defects:defect_edit' defect.pk %}" class="btn-lavender-outline" style="margin-right:4px;">Edytuj</a>
+                    <a href="{% url 'defects:defect_delete' defect.pk %}" class="btn-lavender-outline" style="background:#FFE0E0;color:#8B2020;">Usuń</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center" style="color:#9B93C4;padding:24px;">Brak defektów</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

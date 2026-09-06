@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block nav_tests %}active{% endblock %}
+{% block page_title %}{{ project.project_number }} — {{ project.name }}{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'test_cases:project_list' %}" class="btn-lavender-outline">← Wróć do listy</a>
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">Postęp</div>
+            <div class="stat-value" style="color:#7C6FAD;">{{ project.get_progress }}%</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">Plany testów</div>
+            <div class="stat-value">{{ test_plans|length }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">Status</div>
+            <div style="margin-top:8px;">
+                {% if project.status == 'IN_PROGRESS' %}
+                    <span class="badge-progress-custom">⟳ IN PROGRESS</span>
+                {% elif project.status == 'COMPLETED' %}
+                    <span class="badge-success-custom">✓ COMPLETED</span>
+                {% else %}
+                    <span class="badge-failed-custom">⏸ ON HOLD</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-label">Termin</div>
+            <div class="stat-value" style="font-size:16px;margin-top:4px;">{{ project.deadline|date:"d.m.Y"|default:"—" }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="table-card mb-4">
+    <div class="table-card-header">
+        <div class="table-card-title">Informacje o projekcie</div>
+        <div style="display:flex;gap:8px;">
+            <a href="{% url 'test_cases:project_edit' project.pk %}" class="btn-lavender-outline">Edytuj</a>
+        </div>
+    </div>
+    <div style="padding:18px;">
+        <table class="table mb-0">
+            <tbody>
+                <tr>
+                    <td style="width:200px;color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Numer projektu</td>
+                    <td><strong>{{ project.project_number }}</strong></td>
+                </tr>
+                <tr>
+                    <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Nazwa</td>
+                    <td>{{ project.name }}</td>
+                </tr>
+                <tr>
+                    <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Opis</td>
+                    <td>{{ project.description|default:"Brak opisu" }}</td>
+                </tr>
+                <tr>
+                    <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Kontakty</td>
+                    <td>
+                        {% for contact in project.contacts.all %}
+                            <span style="background:#EDE9FF;color:#7C6FAD;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;margin-right:4px;">
+                                {{ contact.full_name }} — {{ contact.get_role_display }}
+                            </span>
+                        {% empty %}
+                            <span style="color:#9B93C4;">Brak kontaktów</span>
+                        {% endfor %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Plany testów</div>
+        <a href="{% url 'test_cases:test_plan_add' project.pk %}" class="btn-lavender">+ Dodaj plan testów</a>
+    </div>
+    {% for plan in test_plans %}
+    <div style="padding:16px 18px;border-bottom:1px solid #F3F0FF;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div>
+                <div style="font-size:14px;font-weight:700;color:#4A3F7A;">{{ plan.name }}</div>
+                <div style="font-size:12px;color:#9B93C4;margin-top:2px;">{{ plan.description|default:"Brak opisu" }}</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+                <a href="{% url 'test_cases:test_plan_edit' plan.pk %}" class="btn-lavender-outline">Edytuj</a>
+                <a href="{% url 'test_cases:test_plan_delete' plan.pk %}" class="btn-lavender-outline" style="background:#FFE0E0;color:#8B2020;">Usuń</a>
+            </div>
+        </div>
+        <table class="table mb-0" style="font-size:12px;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nazwa</th>
+                    <th>Priorytet</th>
+                    <th>Status</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tc in plan.test_cases.all %}
+                <tr>
+                    <td><span class="commit-id">{{ tc.test_id }}</span></td>
+                    <td>{{ tc.name }}</td>
+                    <td>
+                        {% if tc.priority == 'HIGH' %}
+                            <span class="badge-failed-custom">HIGH</span>
+                        {% elif tc.priority == 'MEDIUM' %}
+                            <span class="badge-progress-custom">MEDIUM</span>
+                        {% else %}
+                            <span class="badge-success-custom">LOW</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if tc.status == 'PASS' %}
+                            <span class="badge-success-custom">✓ PASS</span>
+                        {% elif tc.status == 'FAIL' %}
+                            <span class="badge-failed-custom">✗ FAIL</span>
+                        {% elif tc.status == 'ONGOING' %}
+                            <span class="badge-progress-custom">⟳ ONGOING</span>
+                        {% elif tc.status == 'BLOCKED' %}
+                            <span class="badge-failed-custom">⛔ BLOCKED</span>
+                        {% else %}
+                            <span style="background:#EDE9FF;color:#7C6FAD;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;">NOT STARTED</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'test_cases:test_case_detail' tc.pk %}" class="btn-lavender-outline" style="margin-right:4px;">Szczegóły</a>
+                        <a href="{% url 'test_cases:test_case_edit' tc.pk %}" class="btn-lavender-outline" style="margin-right:4px;">Edytuj</a>
+                        <a href="{% url 'test_cases:test_case_delete' tc.pk %}" class="btn-lavender-outline" style="background:#FFE0E0;color:#8B2020;">Usuń</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center" style="color:#9B93C4;padding:12px;">Brak przypadków testowych —
+                        <a href="{% url 'test_cases:test_case_add' plan.pk %}" style="color:#7C6FAD;">dodaj pierwszy!</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div style="padding:10px 0 0;">
+            <a href="{% url 'test_cases:test_case_add' plan.pk %}" class="btn-lavender-outline">+ Dodaj przypadek testowy</a>
+        </div>
+    </div>
+    {% empty %}
+    <div style="padding:24px;text-align:center;color:#9B93C4;">Brak planów testów — dodaj pierwszy!</div>
+    {% endfor %}
+</div>
+{% endblock %}

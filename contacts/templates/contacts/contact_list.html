@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block nav_contacts %}active{% endblock %}
+{% block page_title %}Kontakty{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'contacts:contact_add' %}" class="btn-lavender">+ Dodaj kontakt</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Lista kontaktów</div>
+        <span style="background:#EDE9FF;color:#7C6FAD;font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;">
+            {{ contacts|length }} kontaktów
+        </span>
+    </div>
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Imię i nazwisko</th>
+                <th>Email</th>
+                <th>Rola</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contact in contacts %}
+            <tr>
+                <td><strong>{{ contact.full_name }}</strong></td>
+                <td>{{ contact.email }}</td>
+                <td>
+                    <span style="background:#EDE9FF;color:#7C6FAD;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;">
+                        {{ contact.get_role_display }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'contacts:contact_edit' contact.pk %}" class="btn-lavender-outline" style="margin-right:6px;">Edytuj</a>
+                    <a href="{% url 'contacts:contact_delete' contact.pk %}" class="btn-lavender-outline" style="background:#FFE0E0;color:#8B2020;">Usuń</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center" style="color:#9B93C4;padding:24px;">Brak kontaktów — dodaj pierwszy!</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block nav_tests %}active{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'test_cases:project_detail' project.pk %}" class="btn-lavender-outline">← Wróć do projektu</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card" style="max-width:600px;">
+    <div class="table-card-header">
+        <div class="table-card-title">{{ title }}</div>
+        <span style="background:#EDE9FF;color:#7C6FAD;font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;">
+            {{ project.project_number }}
+        </span>
+    </div>
+    <div style="padding:24px;">
+        <form method="post">
+            {% csrf_token %}
+            <div style="margin-bottom:16px;">
+                <label style="font-size:11px;font-weight:700;color:#9B93C4;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">{{ form.name.label }}</label>
+                {{ form.name }}
+                {% if form.name.errors %}<div style="color:#8B2020;font-size:12px;margin-top:4px;">{{ form.name.errors }}</div>{% endif %}
+            </div>
+            <div style="margin-bottom:24px;">
+                <label style="font-size:11px;font-weight:700;color:#9B93C4;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">{{ form.description.label }}</label>
+                {{ form.description }}
+            </div>
+            <button type="submit" class="btn-lavender" style="width:100%;padding:10px;font-size:14px;">Zapisz</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block nav_defects %}active{% endblock %}
+{% block page_title %}{{ defect.name }}{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'defects:defect_list' %}" class="btn-lavender-outline">← Wróć do listy</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Szczegóły defektu</div>
+        <div style="display:flex;gap:8px;">
+            <a href="{% url 'defects:defect_edit' defect.pk %}" class="btn-lavender-outline">Edytuj</a>
+            <a href="{% url 'defects:defect_delete' defect.pk %}" class="btn-lavender-outline" style="background:#FFE0E0;color:#8B2020;">Usuń</a>
+        </div>
+    </div>
+    <table class="table mb-0">
+        <tbody>
+            <tr>
+                <td style="width:200px;color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Nazwa</td>
+                <td><strong>{{ defect.name }}</strong></td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Projekt</td>
+                <td>{{ defect.test_case.test_plan.project.project_number }} — {{ defect.test_case.test_plan.project.name }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Przypadek testowy</td>
+                <td>
+                    <a href="{% url 'test_cases:test_case_detail' defect.test_case.pk %}" style="color:#7C6FAD;">
+                        {{ defect.test_case.test_id }} — {{ defect.test_case.name }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Waga</td>
+                <td>
+                    {% if defect.severity == 'CRITICAL' %}
+                        <span class="badge-failed-custom">🚨 CRITICAL</span>
+                    {% elif defect.severity == 'MAJOR' %}
+                        <span class="badge-failed-custom">⚠️ MAJOR</span>
+                    {% elif defect.severity == 'MEDIUM' %}
+                        <span class="badge-progress-custom">📋 MEDIUM</span>
+                    {% else %}
+                        <span class="badge-success-custom">📝 MINOR</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Status</td>
+                <td>
+                    {% if defect.status == 'NEW' %}
+                        <span style="background:#EDE9FF;color:#7C6FAD;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;">NEW</span>
+                    {% elif defect.status == 'IN_PROGRESS' %}
+                        <span class="badge-progress-custom">IN PROGRESS</span>
+                    {% elif defect.status == 'RESOLVED' %}
+                        <span class="badge-success-custom">RESOLVED</span>
+                    {% else %}
+                        <span style="background:#EDE9FF;color:#7C6FAD;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;">CLOSED</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Opis</td>
+                <td style="white-space:pre-line;">{{ defect.description }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Data zgłoszenia</td>
+                <td>{{ defect.reported_at|date:"d.m.Y H:i" }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

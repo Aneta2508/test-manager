@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block nav_reports %}active{% endblock %}
+{% block page_title %}Raporty PDF{% endblock %}
+
+{% block topbar_right %}
+    <span style="background:#EDE9FF;color:#7C6FAD;font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;">
+        {{ projects|length }} projektów
+    </span>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Generuj raporty PDF</div>
+    </div>
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Numer projektu</th>
+                <th>Nazwa</th>
+                <th>Status</th>
+                <th>Postęp</th>
+                <th>Termin</th>
+                <th>Raport</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+            <tr>
+                <td>
+                    <a href="{% url 'test_cases:project_detail' project.pk %}" style="color:#7C6FAD;font-weight:700;">
+                        {{ project.project_number }}
+                    </a>
+                </td>
+                <td>{{ project.name }}</td>
+                <td>
+                    {% if project.status == 'IN_PROGRESS' %}
+                        <span class="badge-progress-custom">⟳ IN PROGRESS</span>
+                    {% elif project.status == 'COMPLETED' %}
+                        <span class="badge-success-custom">✓ COMPLETED</span>
+                    {% else %}
+                        <span class="badge-failed-custom">⏸ ON HOLD</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="flex:1;background:#EDE9FF;border-radius:99px;height:8px;">
+                            <div style="width:{{ project.get_progress }}%;background:#7C6FAD;border-radius:99px;height:8px;"></div>
+                        </div>
+                        <span style="font-size:12px;font-weight:700;color:#7C6FAD;">{{ project.get_progress }}%</span>
+                    </div>
+                </td>
+                <td>{{ project.deadline|date:"d.m.Y"|default:"—" }}</td>
+                <td>
+                    <a href="{% url 'reports:generate_report' project.pk %}" class="btn-lavender" style="background:#2D6A4F;">
+                        📄 Generuj PDF
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center" style="color:#9B93C4;padding:24px;">Brak projektów</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

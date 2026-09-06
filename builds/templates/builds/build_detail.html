@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block nav_builds %}active{% endblock %}
+{% block page_title %}Build #{{ build.build_number }}{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'builds:build_list' %}" class="btn-lavender-outline">← Wróć do listy</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Szczegóły buildu</div>
+        {% if build.status == 'SUCCESS' %}
+            <span class="badge-success-custom">✓ SUCCESS</span>
+        {% elif build.status == 'FAILED' %}
+            <span class="badge-failed-custom">✗ FAILED</span>
+        {% else %}
+            <span class="badge-progress-custom">⟳ IN PROGRESS</span>
+        {% endif %}
+    </div>
+    <table class="table mb-0">
+        <tbody>
+            <tr>
+                <td style="width:200px;color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Numer buildu</td>
+                <td><strong>#{{ build.build_number }}</strong></td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Commit ID</td>
+                <td><span class="commit-id">{{ build.commit_id }}</span></td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Status</td>
+                <td>
+                    {% if build.status == 'SUCCESS' %}
+                        <span class="badge-success-custom">✓ SUCCESS</span>
+                    {% elif build.status == 'FAILED' %}
+                        <span class="badge-failed-custom">✗ FAILED</span>
+                    {% else %}
+                        <span class="badge-progress-custom">⟳ IN PROGRESS</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Data wdrożenia</td>
+                <td>{{ build.deployed_at|date:"d.m.Y H:i" }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Opis</td>
+                <td>{{ build.description|default:"Brak opisu" }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

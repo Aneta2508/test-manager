@@ -1,0 +1,29 @@
+# Pliki których nie wrzucać na GiTHub
+# Plik z hasłami
+.env
+
+# Wirtualne środowisko Python
+venv/
+
+# Pliki tymczasowe Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Baza danych SQLite (używam PostgreSQL ale na wszelki wypadek)
+db.sqlite3
+
+# Pliki mediów (zdjęcia, screenshoty użytkowników)
+media/
+
+# Pliki systemowe
+.DS_Store
+Thumbs.db
+
+# Pliki konfiguracyjne PyCharm
+.idea/
+
+# Pliki środowiskowe
+*.env
+.env.*

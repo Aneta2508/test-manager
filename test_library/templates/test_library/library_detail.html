@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block nav_library %}active{% endblock %}
+{% block page_title %}{{ library_case.test_id }} — {{ library_case.name }}{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'test_library:library_list' %}" class="btn-lavender-outline">← Wróć do biblioteki</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Szczegóły przypadku testowego</div>
+        <div style="display:flex;gap:8px;">
+            <a href="{% url 'test_library:library_edit' library_case.pk %}" class="btn-lavender-outline">Edytuj</a>
+            <a href="{% url 'test_library:library_delete' library_case.pk %}" class="btn-lavender-outline" style="background:#FFE0E0;color:#8B2020;">Usuń</a>
+        </div>
+    </div>
+    <table class="table mb-0">
+        <tbody>
+            <tr>
+                <td style="width:200px;color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">ID</td>
+                <td><span class="commit-id">{{ library_case.test_id }}</span></td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Nazwa</td>
+                <td><strong>{{ library_case.name }}</strong></td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Opis</td>
+                <td>{{ library_case.description|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Warunki wstępne</td>
+                <td>{{ library_case.preconditions|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Kroki testowe</td>
+                <td style="white-space:pre-line;">{{ library_case.steps }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Oczekiwany rezultat</td>
+                <td>{{ library_case.expected_result }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Priorytet</td>
+                <td>
+                    {% if library_case.priority == 'HIGH' %}
+                        <span class="badge-failed-custom">HIGH</span>
+                    {% elif library_case.priority == 'MEDIUM' %}
+                        <span class="badge-progress-custom">MEDIUM</span>
+                    {% else %}
+                        <span class="badge-success-custom">LOW</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Data dodania</td>
+                <td>{{ library_case.created_at|date:"d.m.Y H:i" }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Sekcja kopiowania do planu testów -->
+<div class="table-card" style="margin-top:16px;">
+    <div class="table-card-header">
+        <div class="table-card-title">Skopiuj do planu testów</div>
+    </div>
+    <div style="padding:18px;">
+        {% if test_plans %}
+        <table class="table mb-0">
+            <thead>
+                <tr>
+                    <th>Plan testów</th>
+                    <th>Projekt</th>
+                    <th>Akcja</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for plan in test_plans %}
+                <tr>
+                    <td>{{ plan.name }}</td>
+                    <td>{{ plan.project.project_number }} — {{ plan.project.name }}</td>
+                    <td>
+                        <a href="{% url 'test_library:library_copy_to_plan' library_case.pk plan.pk %}" class="btn-lavender">
+                            📋 Skopiuj do tego planu
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color:#9B93C4;text-align:center;padding:16px;">Brak planów testów — najpierw stwórz projekt i plan testów!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

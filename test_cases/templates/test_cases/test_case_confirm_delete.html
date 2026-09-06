@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block nav_tests %}active{% endblock %}
+{% block page_title %}Usuń przypadek testowy{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'test_cases:project_detail' test_case.test_plan.project.pk %}" class="btn-lavender-outline">← Wróć do projektu</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card" style="max-width:600px;">
+    <div class="table-card-header">
+        <div class="table-card-title">Potwierdź usunięcie</div>
+    </div>
+    <div style="padding:24px;">
+        <p style="color:#4A3F7A;font-size:15px;margin-bottom:8px;">
+            Czy na pewno chcesz usunąć przypadek testowy:
+        </p>
+        <p style="font-size:18px;font-weight:700;color:#4A3F7A;margin-bottom:4px;">
+            {{ test_case.test_id }} — {{ test_case.name }}
+        </p>
+        <p style="color:#9B93C4;font-size:13px;margin-bottom:16px;">
+            Plan testów: {{ test_case.test_plan.name }}
+        </p>
+        <p style="color:#8B2020;font-size:12px;margin-bottom:24px;background:#FFE0E0;padding:10px;border-radius:8px;">
+            ⚠️ Tej operacji nie można cofnąć!
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <div style="display:flex;gap:12px;">
+                <button type="submit" class="btn-lavender" style="background:#E24B4A;flex:1;padding:10px;">Tak, usuń</button>
+                <a href="{% url 'test_cases:project_detail' test_case.test_plan.project.pk %}" class="btn-lavender-outline" style="flex:1;padding:10px;text-align:center;">Anuluj</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

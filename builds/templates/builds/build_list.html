@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block nav_builds %}active{% endblock %}
+{% block page_title %}Buildy{% endblock %}
+
+{% block topbar_right %}
+    <span style="background:#EDE9FF;color:#7C6FAD;font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;">
+        {{ builds|length }} buildów łącznie
+    </span>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-label">Wszystkie</div>
+            <div class="stat-value">{{ builds|length }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-label">Success</div>
+            <div class="stat-value" style="color:#2D6A4F;">{{ builds_success }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="stat-label">Failed</div>
+            <div class="stat-value" style="color:#8B2020;">{{ builds_failed }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Lista buildów</div>
+        <a href="/admin/builds/build/add/" class="btn-lavender">+ Dodaj build</a>
+    </div>
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Numer</th>
+                <th>Commit ID</th>
+                <th>Status</th>
+                <th>Data wdrożenia</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for build in builds %}
+            <tr>
+                <td><strong>#{{ build.build_number }}</strong></td>
+                <td><span class="commit-id">{{ build.commit_id }}</span></td>
+                <td>
+                    {% if build.status == 'SUCCESS' %}
+                        <span class="badge-success-custom">✓ SUCCESS</span>
+                    {% elif build.status == 'FAILED' %}
+                        <span class="badge-failed-custom">✗ FAILED</span>
+                    {% else %}
+                        <span class="badge-progress-custom">⟳ IN PROGRESS</span>
+                    {% endif %}
+                </td>
+                <td>{{ build.deployed_at|date:"d.m.Y H:i" }}</td>
+                <td>
+                    <a href="{% url 'builds:build_detail' build.pk %}" class="btn-lavender-outline">Szczegóły →</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center" style="color:#9B93C4;padding:24px;">Brak buildów</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

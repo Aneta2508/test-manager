@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block nav_tests %}active{% endblock %}
+{% block page_title %}{{ test_case.test_id }} — {{ test_case.name }}{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'test_cases:project_detail' test_case.test_plan.project.pk %}" class="btn-lavender-outline">← Wróć do projektu</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Szczegóły przypadku testowego</div>
+        <div style="display:flex;gap:8px;">
+            <a href="{% url 'defects:defect_add' test_case.pk %}" class="btn-lavender" style="background:#E24B4A;">🐛 Zgłoś defekt</a>
+            <a href="{% url 'test_cases:test_case_edit' test_case.pk %}" class="btn-lavender-outline">Edytuj</a>
+            <a href="{% url 'test_cases:test_case_delete' test_case.pk %}" class="btn-lavender-outline" style="background:#FFE0E0;color:#8B2020;">Usuń</a>
+        </div>
+    </div>
+    <table class="table mb-0">
+        <tbody>
+            <tr>
+                <td style="width:200px;color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">ID</td>
+                <td><span class="commit-id">{{ test_case.test_id }}</span></td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Nazwa</td>
+                <td><strong>{{ test_case.name }}</strong></td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Opis</td>
+                <td>{{ test_case.description|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Warunki wstępne</td>
+                <td>{{ test_case.preconditions|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Kroki testowe</td>
+                <td style="white-space:pre-line;">{{ test_case.steps }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Oczekiwany rezultat</td>
+                <td>{{ test_case.expected_result }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Priorytet</td>
+                <td>
+                    {% if test_case.priority == 'HIGH' %}
+                        <span class="badge-failed-custom">HIGH</span>
+                    {% elif test_case.priority == 'MEDIUM' %}
+                        <span class="badge-progress-custom">MEDIUM</span>
+                    {% else %}
+                        <span class="badge-success-custom">LOW</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Status</td>
+                <td>
+                    {% if test_case.status == 'PASS' %}
+                        <span class="badge-success-custom">✓ PASS</span>
+                    {% elif test_case.status == 'FAIL' %}
+                        <span class="badge-failed-custom">✗ FAIL</span>
+                    {% elif test_case.status == 'ONGOING' %}
+                        <span class="badge-progress-custom">⟳ ONGOING</span>
+                    {% elif test_case.status == 'BLOCKED' %}
+                        <span class="badge-failed-custom">⛔ BLOCKED</span>
+                    {% else %}
+                        <span style="background:#EDE9FF;color:#7C6FAD;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;">NOT STARTED</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Komentarz</td>
+                <td>{{ test_case.comment|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Data wykonania</td>
+                <td>{{ test_case.executed_at|date:"d.m.Y"|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Środowisko</td>
+                <td>{{ test_case.environment|default:"—" }}</td>
+            </tr>
+            {% if test_case.screenshot %}
+            <tr>
+                <td style="color:#9B93C4;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Screenshot</td>
+                <td><img src="{{ test_case.screenshot.url }}" style="max-width:400px;border-radius:8px;border:1px solid #EDE9FF;"></td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

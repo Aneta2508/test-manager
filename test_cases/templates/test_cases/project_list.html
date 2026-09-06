@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block nav_tests %}active{% endblock %}
+{% block page_title %}Projekty{% endblock %}
+
+{% block topbar_right %}
+    <a href="{% url 'test_cases:project_add' %}" class="btn-lavender">+ Dodaj projekt</a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">Lista projektów</div>
+        <span style="background:#EDE9FF;color:#7C6FAD;font-size:11px;font-weight:600;padding:4px 12px;border-radius:99px;">
+            {{ projects|length }} projektów
+        </span>
+    </div>
+    <table class="table mb-0">
+        <thead>
+            <tr>
+                <th>Numer</th>
+                <th>Nazwa</th>
+                <th>Status</th>
+                <th>Postęp</th>
+                <th>Termin</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+            <tr>
+                <td><strong>{{ project.project_number }}</strong></td>
+                <td>{{ project.name }}</td>
+                <td>
+                    {% if project.status == 'IN_PROGRESS' %}
+                        <span class="badge-progress-custom">⟳ IN PROGRESS</span>
+                    {% elif project.status == 'COMPLETED' %}
+                        <span class="badge-success-custom">✓ COMPLETED</span>
+                    {% else %}
+                        <span class="badge-failed-custom">⏸ ON HOLD</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="flex:1;background:#EDE9FF;border-radius:99px;height:8px;">
+                            <div style="width:{{ project.get_progress }}%;background:#7C6FAD;border-radius:99px;height:8px;"></div>
+                        </div>
+                        <span style="font-size:12px;font-weight:700;color:#7C6FAD;">{{ project.get_progress }}%</span>
+                    </div>
+                </td>
+                <td>{{ project.deadline|date:"d.m.Y"|default:"—" }}</td>
+                <td>
+                    <a href="{% url 'test_cases:project_detail' project.pk %}" class="btn-lavender-outline" style="margin-right:6px;">Szczegóły →</a>
+                    <a href="{% url 'test_cases:project_edit' project.pk %}" class="btn-lavender-outline" style="margin-right:6px;">Edytuj</a>
+                    <a href="{% url 'test_cases:project_delete' project.pk %}" class="btn-lavender-outline" style="background:#FFE0E0;color:#8B2020;">Usuń</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center" style="color:#9B93C4;padding:24px;">Brak projektów — dodaj pierwszy!</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
