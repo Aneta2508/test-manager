@@ -69,7 +69,7 @@ def generate_report(request, project_pk):
     # STRONA 1 — TYTUŁOWA
     # ============================================================
     story.append(Spacer(1, 3*cm))
-    story.append(Paragraph("RAPORT Z TESTÓW", title_style))
+    story.append(Paragraph("TEST RAPORT", title_style))
     story.append(Spacer(1, 0.5*cm))
     story.append(HRFlowable(width="100%", thickness=2, color=LAVENDER))
     story.append(Spacer(1, 0.5*cm))
@@ -78,7 +78,7 @@ def generate_report(request, project_pk):
     story.append(Spacer(1, 1*cm))
 
     # Data wygenerowania
-    story.append(Paragraph(f"Data wygenerowania: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M')}", center_style))
+    story.append(Paragraph(f"Data wygenerowania raportu: {datetime.datetime.now().strftime('%d.%m.%Y %H:%M')}", center_style))
     story.append(Paragraph(f"Status projektu: {project.get_status_display()}", center_style))
     if project.deadline:
         story.append(Paragraph(f"Termin projektu: {project.deadline.strftime('%d.%m.%Y')}", center_style))
@@ -158,7 +158,7 @@ def generate_report(request, project_pk):
     medium = all_defects.filter(severity='MEDIUM').count()
     minor = all_defects.filter(severity='MINOR').count()
 
-    story.append(Paragraph("Defekty według wagi:", heading_style))
+    story.append(Paragraph("Wykryte defekty posortowane według wagi:", heading_style))
     defect_stats_data = [
         ['Waga', 'Liczba'],
         ['CRITICAL', str(critical)],
@@ -185,7 +185,7 @@ def generate_report(request, project_pk):
     # ============================================================
     # STRONA 3+ — WYNIKI TESTÓW
     # ============================================================
-    story.append(Paragraph("WYNIKI TESTÓW", heading_style))
+    story.append(Paragraph("WYNIKI PRZEPROWADZONYCH TESTÓW", heading_style))
     story.append(HRFlowable(width="100%", thickness=1, color=LAVENDER))
 
     test_plans = project.test_plans.all()
@@ -265,14 +265,14 @@ def generate_report(request, project_pk):
 
     if critical > 0:
         story.append(Paragraph(
-            f"⚠️ BLOKADA WDROŻENIA: Wykryto {critical} defekt(ów) o wadze CRITICAL. "
+            f" BLOKADA WDROŻENIA: Wykryto {critical} defekt(ów) o wadze CRITICAL. "
             f"Projekt nie jest gotowy do wdrożenia. Wymagane natychmiastowe działania naprawcze.",
             ParagraphStyle('Warning', parent=styles['Normal'], fontSize=10,
                 textColor=FAIL_COLOR, spaceAfter=8, fontName='DejaVuSans-Bold')
         ))
     elif major > 0:
         story.append(Paragraph(
-            f"⚠️ UWAGA: Wykryto {major} defekt(ów) o wadze MAJOR. "
+            f" UWAGA: Wykryto {major} defekt(ów) o wadze MAJOR. "
             f"Zalecane jest naprawienie tych defektów przed wdrożeniem.",
             ParagraphStyle('Warning', parent=styles['Normal'], fontSize=10,
                 textColor=WARNING_COLOR, spaceAfter=8, fontName='DejaVuSans-Bold')
@@ -292,7 +292,7 @@ def generate_report(request, project_pk):
         ))
 
     story.append(Spacer(1, 0.5*cm))
-    story.append(Paragraph(f"Raport wygenerowany automatycznie przez Test Manager — {datetime.datetime.now().strftime('%d.%m.%Y %H:%M')}", small_style))
+    story.append(Paragraph(f"Raport wygenerowany automatycznie przez aplikacje Test Manager — {datetime.datetime.now().strftime('%d.%m.%Y %H:%M')}", small_style))
 
     doc.build(story)
     return response

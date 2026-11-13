@@ -1,0 +1,58 @@
+name: CI - Test Manager
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      DB_NAME: test_manager_db
+      DB_USER: ci_user
+      DB_PASSWORD: ci_password
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      SECRET_KEY: ci-only-secret-key
+      DEBUG: "True"
+      EMAIL_HOST_USER: ci@example.com
+      EMAIL_HOST_PASSWORD: ci-password
+
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_DB: test_manager_db
+          POSTGRES_USER: ci_user
+          POSTGRES_PASSWORD: ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci_user -d test_manager_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Pobranie kodu z repozytorium
+        uses: actions/checkout@v4
+
+      - name: Budowanie obrazu Docker
+        run: docker build -t test-manager .
+
+      - name: Migracje bazy danych
+        run: |
+          docker run --rm --network host \
+            -e DB_NAME -e DB_USER -e DB_PASSWORD -e DB_HOST -e DB_PORT \
+            -e SECRET_KEY -e DEBUG -e EMAIL_HOST_USER -e EMAIL_HOST_PASSWORD \
+            test-manager python manage.py migrate
+
+      - name: Testy automatyczne
+        run: |
+          docker run --rm --network host \
+            -e DB_NAME -e DB_USER -e DB_PASSWORD -e DB_HOST -e DB_PORT \
+            -e SECRET_KEY -e DEBUG -e EMAIL_HOST_USER -e EMAIL_HOST_PASSWORD \
+            test-manager python manage.py test
