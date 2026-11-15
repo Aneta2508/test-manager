@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class Build(models.Model):
 
@@ -16,6 +17,10 @@ class Build(models.Model):
 
     def __str__(self):
         return f"Build #{self.build_number} — {self.status}"
+
+    @property
+    def commit_url(self):
+        return f"{settings.REPO_URL}/commit/{self.commit_id}"
 
     class Meta:
         ordering = ['-deployed_at']
